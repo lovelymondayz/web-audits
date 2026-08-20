@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  web-audits-api:
+    build: .
+    container_name: web-audits-api
+    ports:
+      - "8094:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  web-audits-dashboard:
+    image: nginx:alpine
+    container_name: web-audits-dashboard
+    ports:
+      - "8095:80"
+    volumes:
+      - ./src/dashboard/public:/usr/share/nginx/html
+    restart: unless-stopped
